@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-dark-black: #001219;
+  --color-primary: #27DEF2;
+  --color-dark-gray: #A5A5A5;
+  --border-width-1: 1px;
+}
+
+/* Global Direct Tags */
+html {
+  background-color: #001219;
+  scroll-behavior: smooth;
+}
+
+input {
+  font-family: "Lexend Deca", sans-serif;
+}
+
+input::placeholder {
+  font-family: "Lexend Deca", sans-serif;
+  letter-spacing: normal;
+}
+
+input[type="password"] {
+  letter-spacing: 0.25rem;
+}
+
+button {
+  font-family: "Lexend Deca", sans-serif;
+  font-weight: 500;
+}
+
+/* Disabling all general highlighting */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}
+
+h1 {
+  font-family: "Playfair Display", serif;
+}
+
+h2,
+h3,
+p {
+  font-family: "Lexend Deca", sans-serif;
+}
