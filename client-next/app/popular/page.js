@@ -9,6 +9,8 @@ import getMonthAndDay from "../../utils/getMonthAndDay";
 import { BottomScrollListener } from "react-bottom-scroll-listener";
 import Loading from "../../components/Loading";
 import PersistLogin from "../../components/PersistLogin";
+import Branding from "../../components/Branding";
+
 
 import useAuth from "../../hooks/useAuth";
 
@@ -97,10 +99,12 @@ const Popular = () => {
 
     return (
         <PersistLogin>
-            <section className={`h-screen w-screen flex flex-col-reverse lg:flex-row lg:items-start`}>
+            <section className={`min-h-screen w-full flex flex-col-reverse lg:flex-row lg:items-start`}>
+
                 <BottomScrollListener onBottom={() => setIsFetching(true)}>
                     <Navbar />
-                    <section className={`h-full flex flex-col`}>
+                    <section className={`min-h-full w-full flex flex-col`}>
+
                         <div className={`w-full flex flex-col justify-center items-center pt-8`}>
                             <div className={`border-t-4 border-primary w-8`}></div>
                             <h3 className={`text-2xl text-white text-center`}>Popular</h3>
@@ -141,7 +145,9 @@ const Popular = () => {
                                     </h2>
                                 </div>
                             ) : ""}
+                            <Branding />
                         </div>
+
                     </section>
                 </BottomScrollListener>
             </section>

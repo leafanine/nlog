@@ -6,6 +6,8 @@ import _ from "lodash";
 import Feed from "../../components/Feed";
 import getMonthAndDay from "../../utils/getMonthAndDay";
 import Loading from "../../components/Loading";
+import Branding from "../../components/Branding";
+
 
 import useAuth from "../../hooks/useAuth";
 
@@ -59,7 +61,7 @@ const Search = () => {
     }, [searchText]);
 
     return (
-        <section className={`flex flex-col h-screen w-screen p-10 gap-2`}>
+        <section className={`flex flex-col min-h-screen w-full p-10 gap-2`}>
             <div className={`flex flex-col gap-4 w-full`}>
                 <h1 className={`text-white lg:text-6xl md:text-4xl text-2xl font-bold text-center`}>
                     Search
@@ -97,7 +99,9 @@ const Search = () => {
                             />
                         );
                     })}
+                    <Branding />
                 </div>
+
             )}
         </section>
     );

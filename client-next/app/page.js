@@ -8,6 +8,8 @@ import getMonthAndDay from "../utils/getMonthAndDay";
 import { BottomScrollListener } from "react-bottom-scroll-listener";
 import Loading from "../components/Loading";
 import PersistLogin from "../components/PersistLogin";
+import Branding from "../components/Branding";
+
 
 import useAuth from "../hooks/useAuth";
 
@@ -89,10 +91,12 @@ const Home = () => {
 
   return (
     <PersistLogin>
-      <section className={`h-screen flex flex-col-reverse lg:flex-row lg:items-start`}>
+      <section className={`min-h-screen flex flex-col-reverse lg:flex-row lg:items-start`}>
+
         <BottomScrollListener onBottom={() => setIsFetching(true)}>
           <Navbar />
-          <section className={`h-full flex flex-col lg:pl-24`}>
+          <section className={`min-h-full flex flex-col lg:pl-24 w-full`}>
+
             <div className={`lg:w-32 flex flex-col justify-center items-center pt-8`}>
               <div className={`border-t-4 border-primary w-8`}></div>
               <h3 className={`text-2xl text-white`}>Latest</h3>
@@ -126,7 +130,9 @@ const Home = () => {
                   </h2>
                 </div>
               ) : ""}
+              <Branding />
             </div>
+
           </section>
         </BottomScrollListener>
       </section>

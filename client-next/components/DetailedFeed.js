@@ -7,6 +7,9 @@ import useAuth from "../hooks/useAuth";
 import Loading from "./Loading";
 import LikeButton from "./LikeButton";
 import Notification from "./Notification";
+import Branding from "./Branding";
+import { formatDate } from "./DateFormatter";
+
 
 const DetailedFeed = () => {
     const params = useParams();
@@ -81,7 +84,7 @@ const DetailedFeed = () => {
                     <h1 className={`text-white text-center text-2xl`}>Post not found</h1>
                 </div>
             ) : (
-                <div className={`flex flex-col p-16 gap-4`}>
+                <div className={`flex flex-col lg:p-16 p-6 gap-4`}>
                     <h1 className={`text-primary text-4xl font-semibold`}>{post.title}</h1>
 
                     <div
@@ -89,7 +92,7 @@ const DetailedFeed = () => {
                     >
                         <div>
                             <p className={`text-dark-gray`}>written by @{post.username}</p>
-                            <p className={`text-dark-gray`}>on {post.created_at}</p>
+                            <p className={`text-dark-gray`}>on {formatDate(post.created_at)}</p>
                         </div>
                         <div className="flex gap-4 items-center">
                             <LikeButton post={post} postId={postId} />
@@ -110,6 +113,8 @@ const DetailedFeed = () => {
                         <span className={`text-4xl`}>{firstLetter}</span>
                         {post.content.trim().slice(1)}
                     </p>
+
+                    <Branding />
                 </div>
             )}
         </>
