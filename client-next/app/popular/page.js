@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+
 import Feed from "../../components/Feed";
 import Navbar from "../../components/Navbar";
 import supabase from "../../lib/supabase";
@@ -20,10 +21,14 @@ const Popular = () => {
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const { session } = useAuth();
+    const loadingRef = useRef(false);
+
 
     const getPosts = async (currentPage) => {
-        if (!hasMore || isLoading) return;
+        if (!hasMore || loadingRef.current) return;
+        loadingRef.current = true;
         setIsLoading(true);
+
         try {
             const from = currentPage * PAGE_SIZE;
             const to = from + PAGE_SIZE - 1;
@@ -43,13 +48,21 @@ const Popular = () => {
             );
 
             if (data.length < PAGE_SIZE) setHasMore(false);
-            setPosts((prev) => [...prev, ...sorted]);
+            setPosts((prev) => {
+                const uniqueData = sorted.filter(
+                    (newPost) => !prev.some((existingPost) => existingPost.id === newPost.id)
+                );
+                return [...prev, ...uniqueData];
+            });
             setPage(currentPage + 1);
+
         } catch (err) {
             console.error(err);
         } finally {
             setIsLoading(false);
+            loadingRef.current = false;
         }
+
     };
 
     const handleDelete = async (postId) => {
@@ -73,10 +86,14 @@ const Popular = () => {
     }, []);
 
     useEffect(() => {
-        if (!isFetching) return;
+        if (!isFetching || page === 0) {
+            if (isFetching) setIsFetching(false);
+            return;
+        }
         getPosts(page);
         setIsFetching(false);
-    }, [isFetching]);
+    }, [isFetching, page]);
+
 
     return (
         <PersistLogin>
