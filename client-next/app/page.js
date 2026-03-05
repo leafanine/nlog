@@ -118,6 +118,7 @@ const Home = () => {
                     likes={elem.likes ?? []}
                     isAuthor={session?.user?.id === elem.user_id}
                     onDelete={() => handleDelete(elem.id)}
+                    image_url={elem.image_url}
                   />
                 );
               })}

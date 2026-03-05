@@ -109,7 +109,17 @@ const DetailedFeed = () => {
                         </div>
                     </div>
 
-                    <p className={`text-white break-words whitespace-pre-wrap`}>
+                    {post.image_url && (
+                        <div className="w-full mt-4 border-1 border-primary/20 bg-dark-black/40 backdrop-blur-sm p-2 flex justify-center">
+                            <img
+                                src={post.image_url}
+                                alt={post.title}
+                                className="w-full h-auto object-cover shadow-[0_0_30px_rgba(39,222,242,0.15)] transition-all duration-500"
+                            />
+                        </div>
+                    )}
+
+                    <p className={`text-white break-words whitespace-pre-wrap mt-8`}>
                         <span className={`text-4xl`}>{firstLetter}</span>
                         {post.content.trim().slice(1)}
                     </p>

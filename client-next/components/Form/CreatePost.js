@@ -13,6 +13,8 @@ const CreatePost = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [tags, setTags] = useState([]);
+    const [image, setImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [errMsg, setErrMsg] = useState("");
     const { session } = useAuth();
@@ -20,12 +22,46 @@ const CreatePost = () => {
     const [isError, setIsError] = useState(false);
     const router = useRouter();
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                setErrMsg("Image size should be less than 5MB");
+                setIsError(true);
+                return;
+            }
+            setImage(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         try {
             const username = session?.user?.user_metadata?.username;
+            let image_url = null;
 
+            // 1. Upload image if exists
+            if (image) {
+                const fileExt = image.name.split('.').pop();
+                const fileName = `${Math.random()}.${fileExt}`;
+                const filePath = `${session.user.id}/${fileName}`;
+
+                const { error: uploadError, data } = await supabase.storage
+                    .from('post-images')
+                    .upload(filePath, image);
+
+                if (uploadError) throw uploadError;
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from('post-images')
+                    .getPublicUrl(filePath);
+
+                image_url = publicUrl;
+            }
+
+            // 2. Insert post with image_url
             const { error } = await supabase.from("posts").insert({
                 title,
                 content,
@@ -33,6 +69,7 @@ const CreatePost = () => {
                 username,
                 user_id: session.user.id,
                 likes: [],
+                image_url: image_url
             });
 
             if (error) throw error;
@@ -40,6 +77,8 @@ const CreatePost = () => {
             setTitle("");
             setContent("");
             setTags([]);
+            setImage(null);
+            setImagePreview(null);
             setIsSuccess(true);
             setTimeout(() => router.replace("/"), 2000);
         } catch (error) {
@@ -79,8 +118,27 @@ const CreatePost = () => {
                         onChange={(e) => setTitle(e.target.value)}
                         required
                     />
+
+                    {/* Image Upload Input */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-dark-gray text-sm">Upload Cover Image (Optional)</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className={`text-white p-2 w-full border-1 border-primary bg-dark-black`}
+                        />
+                        {imagePreview && (
+                            <img
+                                src={imagePreview}
+                                alt="Preview"
+                                className="w-full h-auto max-h-[300px] object-contain border-1 border-primary mt-2 animate-in zoom-in-95 duration-300"
+                            />
+                        )}
+                    </div>
+
                     <textarea
-                        className={`bg-dark-black text-white pt-5 pb-5 pl-12 pr-12 w-full border-1 border-primary`}
+                        className={`bg-dark-black text-white pt-5 pb-5 pl-12 pr-12 w-full border-1 border-primary min-h-[200px]`}
                         placeholder="Enter post content"
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
@@ -94,10 +152,10 @@ const CreatePost = () => {
                     <TagInput tags={tags} setTags={(value) => setTags(value)} />
                     <div className={`flex justify-between flex-col md:flex-row gap-4`}>
                         <button
-                            className={`text-black bg-primary text-xl pt-4 pb-4 pl-12 pr-12 active:bg-black active:text-primary`}
+                            className={`text-black bg-primary text-xl pt-4 pb-4 pl-12 pr-12 active:bg-black active:text-primary transition-colors`}
                             disabled={isLoading}
                         >
-                            SUBMIT
+                            {isLoading ? "UPLOADING..." : "SUBMIT"}
                         </button>
                     </div>
                 </form>
@@ -105,7 +163,10 @@ const CreatePost = () => {
         </div>
     ) : (
         <div className={`flex justify-center items-center h-screen`}>
-            <Loading />
+            <div className="flex flex-col items-center gap-4">
+                <Loading />
+                <p className="text-primary animate-pulse text-lg">Creating your post...</p>
+            </div>
         </div>
     );
 };
